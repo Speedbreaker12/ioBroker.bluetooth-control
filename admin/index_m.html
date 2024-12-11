@@ -1,0 +1,97 @@
+<html>
+
+<head>
+
+    <!-- Load ioBroker scripts and styles-->
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+    <!-- Load our own files -->
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script type="text/javascript" src="words.js"></script>
+
+    <script type="text/javascript">
+        // This will be called by the admin adapter when the settings page loads
+        function load(settings, onChange) {
+            if (!settings) return;
+            $('.value').each(function () {
+                var $key = $(this);
+                var id = $key.attr('id');
+                if ($key.attr('type') === 'checkbox') {
+                    $key.prop('checked', settings[id])
+                        .on('change', () => onChange());
+                } else {
+                    $key.val(settings[id])
+                        .on('change', () => onChange())
+                        .on('keyup', () => onChange());
+                }
+            });
+            onChange(false);
+            if (M) M.updateTextFields();
+
+            // Nach dem Laden können zusätzliche Init-Funktionen für unsere UI aufgerufen werden:
+            // Falls Ihr "index_m.js" extra Initialisierung braucht, kann es hier geschehen.
+        }
+
+        // This will be called by the admin adapter when the user presses the save button
+        function save(callback) {
+            var obj = {};
+            $('.value').each(function () {
+                var $this = $(this);
+                if ($this.attr('type') === 'checkbox') {
+                    obj[$this.attr('id')] = $this.prop('checked');
+                } else if ($this.attr('type') === 'number') {
+                    obj[$this.attr('id')] = parseFloat($this.val());
+                } else {
+                    obj[$this.attr('id')] = $this.val();
+                }
+            });
+            callback(obj);
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div class="m adapter-container">
+        <div class="row">
+            <div class="col s12 m4 l2">
+                <img src="bluetooth-control.png" class="logo">
+            </div>
+        </div>
+
+        <!-- Hauptcontainer für unsere UI -->
+        <div class="row">
+            <div class="col s12">
+                <h5>Bluetooth Control</h5>
+                <button id="scanBtn" class="btn waves-effect waves-light">Geräte scannen</button>
+                <ul id="devicesList"></ul>
+
+                <h5>Geräteservices:</h5>
+                <div id="deviceDetails"></div>
+
+                <h5>Konfigurierte Geräte und Characteristics:</h5>
+                <table id="configuredDevices">
+                    <thead>
+                        <tr><th>Adresse</th><th>Service UUID</th><th>Characteristic UUID</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <button id="saveConfigBtn" class="btn waves-effect waves-light" style="margin-top:20px;">Konfiguration speichern</button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
