@@ -1,14 +1,12 @@
 <html>
 
 <head>
-
-    <!-- Load ioBroker scripts and styles-->
+    <!-- Load ioBroker scripts and styles -->
     <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
     <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
 
     <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
-
     <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
@@ -16,6 +14,8 @@
     <!-- Load our own files -->
     <link rel="stylesheet" type="text/css" href="style.css" />
     <script type="text/javascript" src="words.js"></script>
+    <!-- Hier binden wir Ihr eigenes JS ein, das die Scan-Logik implementiert -->
+    <script type="text/javascript" src="index_m.js"></script>
 
     <script type="text/javascript">
         // This will be called by the admin adapter when the settings page loads
@@ -35,9 +35,6 @@
             });
             onChange(false);
             if (M) M.updateTextFields();
-
-            // Nach dem Laden können zusätzliche Init-Funktionen für unsere UI aufgerufen werden:
-            // Falls Ihr "index_m.js" extra Initialisierung braucht, kann es hier geschehen.
         }
 
         // This will be called by the admin adapter when the user presses the save button
@@ -68,24 +65,34 @@
             </div>
         </div>
 
-        <!-- Hauptcontainer für unsere UI -->
+        <!-- Hier können bei Bedarf weiterhin andere einfache Einstellungen über class="value" definiert werden -->
+
+        <!-- BLE-Abschnitt: Geräte scannen, anzeigen, konfigurieren -->
         <div class="row">
             <div class="col s12">
                 <h5>Bluetooth Control</h5>
+                <!-- Button zum Scannen von BLE-Geräten -->
                 <button id="scanBtn" class="btn waves-effect waves-light">Geräte scannen</button>
+
+                <!-- Liste gefundener Geräte -->
                 <ul id="devicesList"></ul>
 
                 <h5>Geräteservices:</h5>
                 <div id="deviceDetails"></div>
 
                 <h5>Konfigurierte Geräte und Characteristics:</h5>
-                <table id="configuredDevices">
+                <table id="configuredDevices" class="highlight bordered" style="width: 100%; margin-top: 10px;">
                     <thead>
-                        <tr><th>Adresse</th><th>Service UUID</th><th>Characteristic UUID</th></tr>
+                        <tr>
+                            <th>Adresse</th>
+                            <th>Service UUID</th>
+                            <th>Characteristic UUID</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
 
+                <!-- Button zum Speichern der Konfiguration -->
                 <button id="saveConfigBtn" class="btn waves-effect waves-light" style="margin-top:20px;">Konfiguration speichern</button>
             </div>
         </div>
